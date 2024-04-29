@@ -8,6 +8,7 @@ import {
   istioConfigRouteRef,
   overviewRouteRef,
   servicesRouteRef,
+  trafficGraphRouteRef,
   workloadsRouteRef,
 } from '../../../routes';
 
@@ -37,6 +38,7 @@ export const KialiTabs = () => {
     { label: 'Services', route: servicesRouteRef.path },
     { label: 'Applications', route: appsRouteRef.path },
     { label: 'Istio Config', route: istioConfigRouteRef.path },
+    { label: 'Traffic Graph', route: trafficGraphRouteRef.path}
   ];
 
   return (
