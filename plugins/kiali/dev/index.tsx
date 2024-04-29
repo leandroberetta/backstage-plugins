@@ -34,6 +34,7 @@ import { CertsInfo } from '../src/types/CertsInfo';
 import { DurationInSeconds, TimeInSeconds } from '../src/types/Common';
 import { DashboardModel } from '../src/types/Dashboards';
 import { GrafanaInfo } from '../src/types/GrafanaInfo';
+import { GraphDefinition, GraphElementsQuery } from '../src/types/Graph';
 import {
   AppHealth,
   NamespaceAppHealth,
@@ -79,6 +80,10 @@ class MockKialiClient implements KialiApi {
 
   constructor() {
     this.entity = undefined;
+  }
+
+  getGraphElements(_params: GraphElementsQuery): Promise<GraphDefinition> {
+    return kialiData.graph;
   }
 
   setEntity(entity?: Entity): void {
