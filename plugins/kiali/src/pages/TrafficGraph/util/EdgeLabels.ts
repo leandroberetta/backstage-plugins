@@ -19,21 +19,22 @@ import { GraphPFSettings } from '../types/GraphPFSettings';
 import { NodeMap } from '../types/NodeMap';
 
 export const trimFixed = (fixed: string): string => {
+  let newFixed = fixed;
   if (!fixed.includes('.')) {
-    return fixed;
+    return newFixed;
   }
   while (fixed.endsWith('0')) {
-    fixed = fixed.slice(0, -1);
+    newFixed = fixed.slice(0, -1);
   }
-  return fixed.endsWith('.') ? (fixed = fixed.slice(0, -1)) : fixed;
+  return newFixed.endsWith('.') ? (newFixed = fixed.slice(0, -1)) : newFixed;
 };
 
 export const toFixedDuration = (num: number): string => {
-  num = safeNum(num);
+  let newNum = safeNum(num);
   if (num < 1000) {
-    return `${num.toFixed(0)}ms`;
+    return `${newNum.toFixed(0)}ms`;
   }
-  return `${trimFixed((num / 1000.0).toFixed(2))}s`;
+  return `${trimFixed((newNum / 1000.0).toFixed(2))}s`;
 };
 
 // This is due to us never having figured out why a tiny fraction of what-we-expect-to-be-numbers

@@ -31,7 +31,7 @@ function TrafficGraphPage(props: { view?: string }) {
   const [loadingData, setLoadingData] = React.useState<boolean>(false);
 
   const visualizationRef = React.useRef<Visualization>();
-
+  const activeNamespaces = kialiState.namespaces.activeNamespaces;
   if (!visualizationRef.current) {
     visualizationRef.current = new Visualization();
     visualizationRef.current.registerLayoutFactory(KialiLayoutFactory);
@@ -48,12 +48,8 @@ function TrafficGraphPage(props: { view?: string }) {
   };
 
   const graphQueryElements = {
-    activeNamespaces: kialiState.namespaces.activeNamespaces
-      .map(ns => ns.name)
-      .join(','),
-    namespaces: kialiState.namespaces.activeNamespaces
-      .map(ns => ns.name)
-      .join(','),
+    activeNamespaces: activeNamespaces.map(ns => ns.name).join(','),
+    namespaces: activeNamespaces.map(ns => ns.name).join(','),
     graphType: GraphType.VERSIONED_APP,
     injectServiceNodes: true,
     boxByNamespace: true,
@@ -79,7 +75,7 @@ function TrafficGraphPage(props: { view?: string }) {
     } else {
       setDuration(FilterHelper.currentDuration());
     }
-  }, [HistoryManager.getDuration()]);
+  }, [duration]);
 
   const timeDuration = (
     <TimeDurationComponent
@@ -96,7 +92,7 @@ function TrafficGraphPage(props: { view?: string }) {
 
   const fetchGraph = async () => {
     setLoadingData(true);
-    if (kialiState.namespaces.activeNamespaces.length === 0) {
+    if (activeNamespaces.length === 0) {
       controller.fromModel(
         {
           nodes: [],
@@ -126,7 +122,7 @@ function TrafficGraphPage(props: { view?: string }) {
 
   useEffect(() => {
     fetchGraph();
-  }, [duration, kialiState.namespaces.activeNamespaces]);
+  }, [fetchGraph, duration, activeNamespaces]);
 
   if (loadingData) {
     return <CircularProgress />;
