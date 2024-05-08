@@ -38,7 +38,7 @@ const StyleEdgeComponent: React.FC<StyleEdgeProps> = ({ element, ...rest }) => {
   const data = element.getData();
   const detailsLevel = useDetailsLevel();
 
-  let cssClasses: string[] = [];
+  const cssClasses: string[] = [];
 
   // Change edge color according to the pathStyle
   const edgeClass = kialiStyle({
