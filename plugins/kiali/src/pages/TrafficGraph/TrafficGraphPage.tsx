@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import { useApi } from '@backstage/core-plugin-api';
 
@@ -90,7 +90,7 @@ function TrafficGraphPage(props: { view?: string }) {
 
   const elements = [timeDuration];
 
-  const fetchGraph = async () => {
+  const fetchGraph = useCallback(async () => {
     setLoadingData(true);
     if (activeNamespaces.length === 0) {
       controller.fromModel(
@@ -118,7 +118,7 @@ function TrafficGraphPage(props: { view?: string }) {
       false,
     );
     setLoadingData(false);
-  };
+  }, [controller, activeNamespaces, duration]);
 
   useEffect(() => {
     fetchGraph();
