@@ -29,14 +29,6 @@ export const trimFixed = (fixed: string): string => {
   return newFixed.endsWith('.') ? (newFixed = fixed.slice(0, -1)) : newFixed;
 };
 
-export const toFixedDuration = (num: number): string => {
-  let newNum = safeNum(num);
-  if (num < 1000) {
-    return `${newNum.toFixed(0)}ms`;
-  }
-  return `${trimFixed((newNum / 1000.0).toFixed(2))}s`;
-};
-
 // This is due to us never having figured out why a tiny fraction of what-we-expect-to-be-numbers
 // are in fact strings.  We don't know if our conversion in GraphData.ts has a flaw, or whether
 // something else happens post-conversion.
@@ -49,6 +41,14 @@ export const safeNum = (num: any): number => {
   }
   // this will return NaN if the string is 'NaN' or any other non-number
   return Number(num);
+};
+
+export const toFixedDuration = (num: number): string => {
+  const newNum = safeNum(num);
+  if (num < 1000) {
+    return `${newNum.toFixed(0)}ms`;
+  }
+  return `${trimFixed((newNum / 1000.0).toFixed(2))}s`;
 };
 
 export const toFixedPercent = (num: number): string => {
