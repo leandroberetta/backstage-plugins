@@ -102,8 +102,6 @@ const StyleNodeComponent: React.FC<StyleNodeProps> = ({ element, ...rest }) => {
 
   const { width, height } = element.getDimensions();
 
-  //console.log(element.toModel());
-
   return (
     <g style={{ opacity: opacity }} ref={hoverRef as any}>
       {data.hasSpans && (
