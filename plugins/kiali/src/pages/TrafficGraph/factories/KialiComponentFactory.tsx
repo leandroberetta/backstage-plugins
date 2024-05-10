@@ -3,8 +3,6 @@ import {
   DefaultGroup,
   GraphComponent,
   ModelKind,
-  nodeDragSourceSpec,
-  withDragNode,
   withPanZoom,
   withSelection,
 } from '@patternfly/react-topology';
