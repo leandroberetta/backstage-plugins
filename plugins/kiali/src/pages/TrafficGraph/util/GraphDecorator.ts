@@ -161,7 +161,9 @@ export const decorateGraphData = (
           decoratedNode.data.labels = undefined;
           const prefixedLabels: { [key: string]: string } = {};
           for (const key in labels) {
-            prefixedLabels[toSafeCyFieldName(`label:${key}`)] = labels[key];
+            if (labels.hasOwnProperty(key)) {
+              prefixedLabels[toSafeCyFieldName(`label:${key}`)] = labels[key];
+            }
           }
           decoratedNode.data = { ...prefixedLabels, ...decoratedNode.data };
         }
