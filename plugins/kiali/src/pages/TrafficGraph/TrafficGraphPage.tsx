@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { useApi } from '@backstage/core-plugin-api';
 
@@ -41,32 +41,36 @@ function TrafficGraphPage(props: { view?: string }) {
 
   const controller = visualizationRef.current;
 
-  const graphConfig = {
-    id: 'g1',
-    type: 'graph',
-    layout: 'Dagre',
-  };
+  const graphConfig = useMemo(() => {
+    return {
+      id: 'g1',
+      type: 'graph',
+      layout: 'Dagre',
+    };
+  }, []);
 
-  const graphQueryElements = {
-    activeNamespaces: activeNamespaces.map(ns => ns.name).join(','),
-    namespaces: activeNamespaces.map(ns => ns.name).join(','),
-    graphType: GraphType.VERSIONED_APP,
-    injectServiceNodes: true,
-    boxByNamespace: true,
-    boxByCluster: true,
-    showOutOfMesh: false,
-    showSecurity: false,
-    showVirtualServices: false,
-    edgeLabels: [
-      EdgeLabelMode.TRAFFIC_RATE,
-      EdgeLabelMode.TRAFFIC_DISTRIBUTION,
-    ],
-    trafficRates: [
-      TrafficRate.HTTP_REQUEST,
-      TrafficRate.GRPC_TOTAL,
-      TrafficRate.TCP_TOTAL,
-    ],
-  };
+  const graphQueryElements = useMemo(() => {
+    return {
+      activeNamespaces: activeNamespaces.map(ns => ns.name).join(','),
+      namespaces: activeNamespaces.map(ns => ns.name).join(','),
+      graphType: GraphType.VERSIONED_APP,
+      injectServiceNodes: true,
+      boxByNamespace: true,
+      boxByCluster: true,
+      showOutOfMesh: false,
+      showSecurity: false,
+      showVirtualServices: false,
+      edgeLabels: [
+        EdgeLabelMode.TRAFFIC_RATE,
+        EdgeLabelMode.TRAFFIC_DISTRIBUTION,
+      ],
+      trafficRates: [
+        TrafficRate.HTTP_REQUEST,
+        TrafficRate.GRPC_TOTAL,
+        TrafficRate.TCP_TOTAL,
+      ],
+    };
+  }, [activeNamespaces]);
 
   useEffect(() => {
     const d = HistoryManager.getDuration();
