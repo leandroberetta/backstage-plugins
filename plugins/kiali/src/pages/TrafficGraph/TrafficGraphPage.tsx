@@ -121,7 +121,6 @@ function TrafficGraphPage(props: { view?: string }) {
   }, [
     controller,
     activeNamespaces,
-    duration,
     kialiClient,
     graphQueryElements,
     graphConfig,
