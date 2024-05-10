@@ -17,7 +17,7 @@ export const generateDataModel = (
   graphData: DecoratedGraphElements,
   graphSettings: any,
 ): { edges: EdgeModel[]; nodes: NodeModel[] } => {
-  let nodeMap: Map<string, NodeModel> = new Map<string, NodeModel>();
+  const nodeMap: Map<string, NodeModel> = new Map<string, NodeModel>();
   const edges: EdgeModel[] = [];
 
   function addGroup(data: NodeData): NodeModel {
@@ -74,8 +74,6 @@ export const generateDataModel = (
     const parent = nodeMap.get(parentId);
     if (parent) {
       parent.children?.push(node.id);
-    } else {
-      console.error(`Could not find parent node |${parentId}|`);
     }
   }
 
@@ -91,9 +89,6 @@ export const generateDataModel = (
       addChild(newNode);
     }
   });
-
-  // Compute edge healths one time for the graph
-  //assignEdgeHealth(graphData.elements.edges || [], nodeMap, graphSettings);
 
   graphData.edges?.forEach(e => {
     const ed = e.data;

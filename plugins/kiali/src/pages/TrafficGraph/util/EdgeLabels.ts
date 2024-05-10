@@ -88,7 +88,7 @@ export const getEdgeLabel = (
   const edgeLabels = settings.edgeLabels;
   const isVerbose = data.isSelected;
   const includeUnits = isVerbose || numLabels(edgeLabels) > 1;
-  let labels = [] as string[];
+  const labels = [] as string[];
 
   if (edgeLabels.includes(EdgeLabelMode.TRAFFIC_RATE)) {
     let rate = 0;
@@ -129,7 +129,7 @@ export const getEdgeLabel = (
   }
 
   if (edgeLabels.includes(EdgeLabelMode.RESPONSE_TIME_GROUP)) {
-    let responseTime = data.responseTime;
+    const responseTime = data.responseTime;
 
     if (responseTime > 0) {
       labels.push(toFixedDuration(responseTime));
@@ -137,7 +137,7 @@ export const getEdgeLabel = (
   }
 
   if (edgeLabels.includes(EdgeLabelMode.THROUGHPUT_GROUP)) {
-    let rate = data.throughput;
+    const rate = data.throughput;
 
     if (rate > 0) {
       labels.push(toFixedByteRate(rate, includeUnits));
@@ -175,7 +175,7 @@ export const getEdgeLabel = (
   if (data.hasTraffic && data.responses) {
     if (nodeMap.get(edge.target!)?.data?.hasCB) {
       const responses = data.responses;
-      for (let code of _.keys(responses)) {
+      for (const code of _.keys(responses)) {
         // TODO: Not 100% sure we want "UH" code here ("no healthy upstream hosts") but based on timing I have
         // seen this code returned and not "UO". "UO" is returned only when the circuit breaker is caught open.
         // But if open CB is responsible for removing possible destinations the "UH" code seems preferred.
@@ -190,6 +190,8 @@ export const getEdgeLabel = (
 
     return label;
   }
+
+  return '';
 };
 
 const EdgeColor = PFColors.Success;
