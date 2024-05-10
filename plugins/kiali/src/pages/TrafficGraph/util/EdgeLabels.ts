@@ -36,9 +36,6 @@ export const safeNum = (num: any): number => {
   if (Number.isFinite(num)) {
     return num;
   }
-  if (typeof num === 'string' || num instanceof String) {
-    console.info(`Expected number but received string: |${num}|`);
-  }
   // this will return NaN if the string is 'NaN' or any other non-number
   return Number(num);
 };
@@ -52,8 +49,8 @@ export const toFixedDuration = (num: number): string => {
 };
 
 export const toFixedPercent = (num: number): string => {
-  num = safeNum(num);
-  return `${trimFixed(num.toFixed(1))}%`;
+  const newNum = safeNum(num);
+  return `${trimFixed(newNum.toFixed(1))}%`;
 };
 
 export const toFixedRequestRate = (
@@ -61,20 +58,21 @@ export const toFixedRequestRate = (
   includeUnits: boolean,
   units?: string,
 ): string => {
-  num = safeNum(num);
-  const rate = trimFixed(num.toFixed(2));
+  const newNum = safeNum(num);
+  const rate = trimFixed(newNum.toFixed(2));
   return includeUnits ? `${rate}${units || 'rps'}` : rate;
 };
 
 export const toFixedErrRate = (num: number): string => {
-  num = safeNum(num);
-  return `${trimFixed(num.toFixed(num < 1 ? 1 : 0))}%err`;
+  const newNum = safeNum(num);
+  return `${trimFixed(newNum.toFixed(newNum < 1 ? 1 : 0))}%err`;
 };
 
 export const toFixedByteRate = (num: number, includeUnits: boolean): string => {
-  num = safeNum(num);
-  if (num < 1024.0) {
-    const rate = num < 1.0 ? trimFixed(num.toFixed(2)) : num.toFixed(0);
+  const newNum = safeNum(num);
+  if (newNum < 1024.0) {
+    const rate =
+      newNum < 1.0 ? trimFixed(newNum.toFixed(2)) : newNum.toFixed(0);
     return includeUnits ? `${rate}bps` : rate;
   }
   const rate = trimFixed((num / 1024.0).toFixed(2));

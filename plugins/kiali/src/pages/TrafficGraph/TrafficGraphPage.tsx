@@ -118,7 +118,7 @@ function TrafficGraphPage(props: { view?: string }) {
       false,
     );
     setLoadingData(false);
-  }, [controller, activeNamespaces, duration]);
+  }, [controller, activeNamespaces, duration, kialiClient, graphQueryElements]);
 
   useEffect(() => {
     fetchGraph();
