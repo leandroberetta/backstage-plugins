@@ -1,18 +1,7 @@
-import React, { version } from 'react';
-
 import { NodeModel } from '@patternfly/react-topology';
-import { node } from 'prop-types';
-import { style } from 'typestyle';
 
 import { PFBadges, PFBadgeType } from '../../../components/Pf/PfBadges';
-import { cluster, namespace } from '../../../components/VirtualList/Renderers';
-import {
-  BoxByType,
-  CLUSTER_DEFAULT,
-  GraphType,
-  NodeType,
-  UNKNOWN,
-} from '../../../types/Graph';
+import { BoxByType, GraphType, NodeType, UNKNOWN } from '../../../types/Graph';
 import { GraphPFSettings } from '../types/GraphPFSettings';
 import { NodeData } from '../types/NodeData';
 import { NodeMap } from '../types/NodeMap';
@@ -30,14 +19,11 @@ export const setNodeLabel = (
   const workload = data.workload || '';
   const isBox = data.isBox;
   const isBoxed = data.parent;
-  let box1Type, box2Type: string | undefined;
+  let box1Type: string | undefined = '';
   if (isBoxed) {
-    let box1, box2: NodeModel | undefined;
-    box1 = nodeMap.get(data.parent!);
+    const box1 = nodeMap.get(data.parent!);
     const box1Data = box1?.data as NodeData;
     box1Type = box1Data.isBox;
-    box2 = box1Data.parent ? nodeMap.get(box1Data.parent!) : undefined;
-    box2Type = box2 ? (box2.data as NodeData).isBox : undefined;
   }
   const isAppBoxed = box1Type === BoxByType.APP;
   // Badges portion of label...
@@ -85,6 +71,8 @@ export const setNodeLabel = (
         case BoxByType.NAMESPACE:
           content.unshift(data.namespace);
           break;
+        default:
+          content.unshift('error');
       }
       break;
     case NodeType.SERVICE:
@@ -115,7 +103,7 @@ export const setNodeLabel = (
         pfBadge = PFBadges.Namespace;
         break;
       default:
-        console.warn(`GraphSyles: Unexpected box [${isBox}] `);
+        pfBadge = undefined;
     }
 
     if (pfBadge) {
