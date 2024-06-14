@@ -1,4 +1,11 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { useApi } from '@backstage/core-plugin-api';
 
@@ -22,16 +29,14 @@ import { KialiLayoutFactory } from './factories/KialiLayoutFactory';
 import { decorateGraphData } from './util/GraphDecorator';
 import { generateDataModel } from './util/GraphGenerator';
 
-function TrafficGraphPage(props: { view?: string }) {
+function TrafficGraphPage(props: { view: string }) {
   const kialiClient = useApi(kialiApiRef);
   const kialiState = React.useContext(KialiContext) as KialiAppState;
-  const [duration, setDuration] = React.useState<number>(
-    FilterHelper.currentDuration(),
-  );
-  const [loadingData, setLoadingData] = React.useState<boolean>(false);
-
+  const [duration, setDuration] = useState(FilterHelper.currentDuration());
+  const [loadingData, setLoadingData] = useState(false);
   const visualizationRef = React.useRef<Visualization>();
   const activeNamespaces = kialiState.namespaces.activeNamespaces;
+
   if (!visualizationRef.current) {
     visualizationRef.current = new Visualization();
     visualizationRef.current.registerLayoutFactory(KialiLayoutFactory);
@@ -41,16 +46,17 @@ function TrafficGraphPage(props: { view?: string }) {
 
   const controller = visualizationRef.current;
 
-  const graphConfig = useMemo(() => {
-    return {
+  const graphConfig = useMemo(
+    () => ({
       id: 'g1',
       type: 'graph',
       layout: 'Dagre',
-    };
-  }, []);
+    }),
+    [],
+  );
 
-  const graphQueryElements = useMemo(() => {
-    return {
+  const graphQueryElements = useMemo(
+    () => ({
       activeNamespaces: activeNamespaces.map(ns => ns.name).join(','),
       namespaces: activeNamespaces.map(ns => ns.name).join(','),
       graphType: GraphType.VERSIONED_APP,
@@ -69,17 +75,18 @@ function TrafficGraphPage(props: { view?: string }) {
         TrafficRate.GRPC_TOTAL,
         TrafficRate.TCP_TOTAL,
       ],
-    };
-  }, [activeNamespaces]);
+    }),
+    [activeNamespaces],
+  );
 
   useEffect(() => {
     const d = HistoryManager.getDuration();
     if (d !== undefined) {
-      setDuration(d);
+      setDuration(60);
     } else {
       setDuration(FilterHelper.currentDuration());
     }
-  }, [duration]);
+  }, []);
 
   const timeDuration = (
     <TimeDurationComponent
@@ -92,10 +99,9 @@ function TrafficGraphPage(props: { view?: string }) {
     />
   );
 
-  const elements = [timeDuration];
-
-  const fetchGraph = useCallback(async () => {
+  const fetchGraph = async () => {
     setLoadingData(true);
+    ('Fetching graph data');
     if (activeNamespaces.length === 0) {
       controller.fromModel(
         {
@@ -109,30 +115,29 @@ function TrafficGraphPage(props: { view?: string }) {
       return;
     }
 
-    const data = await kialiClient.getGraphElements(graphQueryElements);
-    const graphData = decorateGraphData(data.elements, data.duration);
-    const g = generateDataModel(graphData, graphQueryElements);
-
-    controller.fromModel(
-      {
-        nodes: g.nodes,
-        edges: g.edges,
-        graph: graphConfig,
-      },
-      false,
-    );
-    setLoadingData(false);
-  }, [
-    controller,
-    activeNamespaces,
-    kialiClient,
-    graphQueryElements,
-    graphConfig,
-  ]);
+    try {
+      const data = await kialiClient.getGraphElements(graphQueryElements);
+      const graphData = decorateGraphData(data.elements, data.duration);
+      const g = generateDataModel(graphData, graphQueryElements);
+      controller.fromModel(
+        {
+          nodes: g.nodes,
+          edges: g.edges,
+          graph: graphConfig,
+        },
+        false,
+      );
+    } catch (error) {
+      console.error('Error fetching graph data:', error);
+    } finally {
+      setLoadingData(false);
+    }
+  };
 
   useEffect(() => {
+    console.log('Running fetchGraph');
     fetchGraph();
-  }, [fetchGraph, duration, activeNamespaces]);
+  }, [duration, activeNamespaces]);
 
   if (loadingData) {
     return <CircularProgress />;
@@ -142,13 +147,10 @@ function TrafficGraphPage(props: { view?: string }) {
     <>
       {props.view !== ENTITY && (
         <DefaultSecondaryMasthead
-          elements={elements}
-          onRefresh={() => {
-            fetchGraph();
-          }}
+          elements={[timeDuration]}
+          onRefresh={fetchGraph}
         />
       )}
-
       <VisualizationProvider controller={controller}>
         <VisualizationSurface state={{ duration }} />
       </VisualizationProvider>

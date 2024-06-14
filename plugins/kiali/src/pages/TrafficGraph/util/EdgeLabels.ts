@@ -19,14 +19,14 @@ import { GraphPFSettings } from '../types/GraphPFSettings';
 import { NodeMap } from '../types/NodeMap';
 
 export const trimFixed = (fixed: string): string => {
-  let newFixed = fixed;
   if (!fixed.includes('.')) {
-    return newFixed;
+    return fixed;
   }
-  while (fixed.endsWith('0')) {
-    newFixed = fixed.slice(0, -1);
+  let newFixed = fixed;
+  while (newFixed.endsWith('0')) {
+    newFixed = newFixed.slice(0, -1);
   }
-  return newFixed.endsWith('.') ? (newFixed = fixed.slice(0, -1)) : newFixed;
+  return newFixed.endsWith('.') ? newFixed.slice(0, -1) : newFixed;
 };
 
 // This is due to us never having figured out why a tiny fraction of what-we-expect-to-be-numbers
@@ -79,7 +79,7 @@ export const toFixedByteRate = (num: number, includeUnits: boolean): string => {
   return includeUnits ? `${rate}kps` : rate;
 };
 
-export const getEdgeLabel = (
+const getEdgeLabel = (
   edge: EdgeModel,
   nodeMap: NodeMap,
   settings: GraphPFSettings,
@@ -88,7 +88,7 @@ export const getEdgeLabel = (
   const edgeLabels = settings.edgeLabels;
   const isVerbose = data.isSelected;
   const includeUnits = isVerbose || numLabels(edgeLabels) > 1;
-  const labels = [] as string[];
+  let labels = [] as string[];
 
   if (edgeLabels.includes(EdgeLabelMode.TRAFFIC_RATE)) {
     let rate = 0;
@@ -129,7 +129,7 @@ export const getEdgeLabel = (
   }
 
   if (edgeLabels.includes(EdgeLabelMode.RESPONSE_TIME_GROUP)) {
-    const responseTime = data.responseTime;
+    let responseTime = data.responseTime;
 
     if (responseTime > 0) {
       labels.push(toFixedDuration(responseTime));
@@ -137,7 +137,7 @@ export const getEdgeLabel = (
   }
 
   if (edgeLabels.includes(EdgeLabelMode.THROUGHPUT_GROUP)) {
-    const rate = data.throughput;
+    let rate = data.throughput;
 
     if (rate > 0) {
       labels.push(toFixedByteRate(rate, includeUnits));
@@ -175,7 +175,7 @@ export const getEdgeLabel = (
   if (data.hasTraffic && data.responses) {
     if (nodeMap.get(edge.target!)?.data?.hasCB) {
       const responses = data.responses;
-      for (const code of _.keys(responses)) {
+      for (let code of _.keys(responses)) {
         // TODO: Not 100% sure we want "UH" code here ("no healthy upstream hosts") but based on timing I have
         // seen this code returned and not "UO". "UO" is returned only when the circuit breaker is caught open.
         // But if open CB is responsible for removing possible destinations the "UH" code seems preferred.
@@ -187,11 +187,9 @@ export const getEdgeLabel = (
         }
       }
     }
-
-    return label;
   }
 
-  return '';
+  return label;
 };
 
 const EdgeColor = PFColors.Success;
