@@ -20,7 +20,7 @@ import { HistoryManager } from '../../app/History';
 import { DefaultSecondaryMasthead } from '../../components/DefaultSecondaryMasthead/DefaultSecondaryMasthead';
 import * as FilterHelper from '../../components/FilterList/FilterHelper';
 import { TimeDurationComponent } from '../../components/Time/TimeDurationComponent';
-import { kialiApiRef } from '../../services/Api';
+import { getErrorString, kialiApiRef } from '../../services/Api';
 import { KialiAppState, KialiContext } from '../../store';
 import { EdgeLabelMode, GraphType, TrafficRate } from '../../types/Graph';
 import { ENTITY } from '../../types/types';
@@ -126,17 +126,18 @@ function TrafficGraphPage(props: { view: string }) {
         },
         false,
       );
-    } catch (error) {
-      console.error('Error fetching graph data:', error);
+    } catch (error: any) {
+      kialiState.alertUtils?.add(
+        `Could not fetch services: ${getErrorString(error)}`,
+      );
     } finally {
       setLoadingData(false);
     }
   };
 
   useEffect(() => {
-    console.log('Running fetchGraph');
     fetchGraph();
-  }, [duration, activeNamespaces]);
+  }, [duration, activeNamespaces, fetchGraph]);
 
   if (loadingData) {
     return <CircularProgress />;
