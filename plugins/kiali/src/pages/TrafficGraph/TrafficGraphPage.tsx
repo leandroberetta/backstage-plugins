@@ -99,7 +99,7 @@ function TrafficGraphPage(props: { view: string }) {
     />
   );
 
-  const fetchGraph = async () => {
+  const fetchGraph = useCallback(async () => {
     setLoadingData(true);
     if (activeNamespaces.length === 0) {
       controller.fromModel(
@@ -133,7 +133,7 @@ function TrafficGraphPage(props: { view: string }) {
     } finally {
       setLoadingData(false);
     }
-  };
+  }, [activeNamespaces, duration, kialiClient, kialiState]);
 
   useEffect(() => {
     fetchGraph();
