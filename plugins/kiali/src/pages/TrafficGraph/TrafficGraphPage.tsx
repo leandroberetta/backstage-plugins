@@ -133,7 +133,15 @@ function TrafficGraphPage(props: { view: string }) {
     } finally {
       setLoadingData(false);
     }
-  }, [activeNamespaces, duration, kialiClient, kialiState]);
+  }, [
+    activeNamespaces,
+    duration,
+    kialiClient,
+    kialiState,
+    controller,
+    graphConfig,
+    graphQueryElements,
+  ]);
 
   useEffect(() => {
     fetchGraph();
