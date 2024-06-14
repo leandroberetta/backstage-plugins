@@ -101,7 +101,6 @@ function TrafficGraphPage(props: { view: string }) {
 
   const fetchGraph = async () => {
     setLoadingData(true);
-    ('Fetching graph data');
     if (activeNamespaces.length === 0) {
       controller.fromModel(
         {
