@@ -8,7 +8,7 @@ import {
 import { DecoratedGraphElements } from '../../../types/Graph';
 import { EdgeData } from '../types/EdgeData';
 import { getNodeShape, getNodeStatus, NodeData } from '../types/NodeData';
-import { setEdgeOptions } from './EdgeLabels';
+import { assignEdgeHealth, setEdgeOptions } from './EdgeLabels';
 import { setNodeLabel } from './NodeLabels';
 
 const DEFAULT_NODE_SIZE = 50;
@@ -89,6 +89,9 @@ export const generateDataModel = (
       addChild(newNode);
     }
   });
+
+  // Compute edge healths one time for the graph
+  assignEdgeHealth(graphData.edges || [], nodeMap, graphSettings);
 
   graphData.edges?.forEach(e => {
     const ed = e.data;

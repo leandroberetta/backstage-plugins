@@ -1,11 +1,4 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useApi } from '@backstage/core-plugin-api';
 
@@ -57,6 +50,7 @@ function TrafficGraphPage(props: { view: string }) {
 
   const graphQueryElements = useMemo(
     () => ({
+      appenders: 'health,deadNode,istio,serviceEntry,meshCheck,workloadEntry',
       activeNamespaces: activeNamespaces.map(ns => ns.name).join(','),
       namespaces: activeNamespaces.map(ns => ns.name).join(','),
       graphType: GraphType.VERSIONED_APP,
