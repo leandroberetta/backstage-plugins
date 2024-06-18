@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { Content } from '@backstage/core-components';
 import { useApi } from '@backstage/core-plugin-api';
 
 import { CircularProgress } from '@material-ui/core';
@@ -22,7 +23,7 @@ import { KialiLayoutFactory } from './factories/KialiLayoutFactory';
 import { decorateGraphData } from './util/GraphDecorator';
 import { generateDataModel } from './util/GraphGenerator';
 
-function TrafficGraphPage(props: { view: string }) {
+function TrafficGraphPage(props: { view?: string }) {
   const kialiClient = useApi(kialiApiRef);
   const kialiState = React.useContext(KialiContext) as KialiAppState;
   const [duration, setDuration] = useState(FilterHelper.currentDuration());
@@ -145,7 +146,7 @@ function TrafficGraphPage(props: { view: string }) {
   }
 
   return (
-    <>
+    <Content>
       {props.view !== ENTITY && (
         <DefaultSecondaryMasthead
           elements={[timeDuration]}
@@ -155,7 +156,7 @@ function TrafficGraphPage(props: { view: string }) {
       <VisualizationProvider controller={controller}>
         <VisualizationSurface state={{ duration }} />
       </VisualizationProvider>
-    </>
+    </Content>
   );
 }
 

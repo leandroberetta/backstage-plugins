@@ -25,6 +25,9 @@ const getPath = (loc: Location): number => {
   if (loc.pathname.includes('istio')) {
     return 4;
   }
+  if (loc.pathname.includes('graph')) {
+    return 5;
+  }
   return 0;
 };
 
