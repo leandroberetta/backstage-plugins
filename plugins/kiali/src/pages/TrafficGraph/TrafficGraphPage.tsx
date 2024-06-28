@@ -16,6 +16,7 @@ import * as FilterHelper from '../../components/FilterList/FilterHelper';
 import { TimeDurationComponent } from '../../components/Time/TimeDurationComponent';
 import { getErrorString, kialiApiRef } from '../../services/Api';
 import { KialiAppState, KialiContext } from '../../store';
+import { kialiStyle } from '../../styles/StyleUtils';
 import { EdgeLabelMode, GraphType, TrafficRate } from '../../types/Graph';
 import { ENTITY } from '../../types/types';
 import { KialiComponentFactory } from './factories/KialiComponentFactory';
@@ -37,6 +38,10 @@ function TrafficGraphPage(props: { view?: string }) {
     visualizationRef.current.registerComponentFactory(KialiComponentFactory);
     visualizationRef.current.setFitToScreenOnLayout(true);
   }
+
+  const graphStyle = kialiStyle({
+    height: '100%',
+  });
 
   const controller = visualizationRef.current;
 
@@ -146,7 +151,7 @@ function TrafficGraphPage(props: { view?: string }) {
   }
 
   return (
-    <Content>
+    <Content className={graphStyle}>
       {props.view !== ENTITY && (
         <DefaultSecondaryMasthead
           elements={[timeDuration]}
