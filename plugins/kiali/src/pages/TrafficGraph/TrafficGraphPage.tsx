@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { Entity } from '@backstage/catalog-model';
 import { Content } from '@backstage/core-components';
 import { useApi } from '@backstage/core-plugin-api';
 
@@ -14,6 +15,7 @@ import { HistoryManager } from '../../app/History';
 import { DefaultSecondaryMasthead } from '../../components/DefaultSecondaryMasthead/DefaultSecondaryMasthead';
 import * as FilterHelper from '../../components/FilterList/FilterHelper';
 import { TimeDurationComponent } from '../../components/Time/TimeDurationComponent';
+import { getEntityNs } from '../../helpers/namespaces';
 import { getErrorString, kialiApiRef } from '../../services/Api';
 import { KialiAppState, KialiContext } from '../../store';
 import { kialiStyle } from '../../styles/StyleUtils';
@@ -24,13 +26,16 @@ import { KialiLayoutFactory } from './factories/KialiLayoutFactory';
 import { decorateGraphData } from './util/GraphDecorator';
 import { generateDataModel } from './util/GraphGenerator';
 
-function TrafficGraphPage(props: { view?: string }) {
+function TrafficGraphPage(props: { view?: string; entity?: Entity }) {
   const kialiClient = useApi(kialiApiRef);
   const kialiState = React.useContext(KialiContext) as KialiAppState;
   const [duration, setDuration] = useState(FilterHelper.currentDuration());
   const [loadingData, setLoadingData] = useState(false);
   const visualizationRef = React.useRef<Visualization>();
-  const activeNamespaces = kialiState.namespaces.activeNamespaces;
+
+  const activeNamespaces = props.entity
+    ? getEntityNs(props.entity)
+    : kialiState.namespaces.activeNamespaces.map(ns => ns.name);
 
   if (!visualizationRef.current) {
     visualizationRef.current = new Visualization();
@@ -57,8 +62,8 @@ function TrafficGraphPage(props: { view?: string }) {
   const graphQueryElements = useMemo(
     () => ({
       appenders: 'health,deadNode,istio,serviceEntry,meshCheck,workloadEntry',
-      activeNamespaces: activeNamespaces.map(ns => ns.name).join(','),
-      namespaces: activeNamespaces.map(ns => ns.name).join(','),
+      activeNamespaces: activeNamespaces.join(','),
+      namespaces: activeNamespaces.join(','),
       graphType: GraphType.VERSIONED_APP,
       injectServiceNodes: true,
       boxByNamespace: true,
